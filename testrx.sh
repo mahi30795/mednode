@@ -74,6 +74,17 @@ ORG2_TOKEN=$(echo $ORG2_TOKEN | jq ".token" | sed "s/\"//g")
 echo
 echo "ORG2 token is $ORG2_TOKEN"
 echo
+echo "POST request Enroll on Org3  ..."
+echo
+ORG3_TOKEN=$(curl -s -X POST \
+  http://localhost:4000/users \
+  -H "content-type: application/x-www-form-urlencoded" \
+  -d 'username=Tittu&orgName=Org3')
+echo $ORG3_TOKEN
+ORG3_TOKEN=$(echo $ORG3_TOKEN | jq ".token" | sed "s/\"//g")
+echo
+echo "ORG3 token is $ORG3_TOKEN"
+echo
 echo
 echo "POST request Create channel  ..."
 echo
@@ -112,6 +123,18 @@ curl -s -X POST \
 echo
 echo
 
+echo "POST request Join channel on Org3"
+echo
+curl -s -X POST \
+  http://localhost:4000/channels/channel/peers \
+  -H "authorization: Bearer $ORG3_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"peers": ["peer0.org3.rxmed.com","peer1.org3.rxmed.com"]
+}'
+echo
+echo
+
 echo "POST request Update anchor peers on Org1"
 echo
 curl -s -X POST \
@@ -132,6 +155,18 @@ curl -s -X POST \
   -H "content-type: application/json" \
   -d '{
 	"configUpdatePath":"../artifacts/channel/Org2MSPanchors.tx"
+}'
+echo
+echo
+
+echo "POST request Update anchor peers on Org3"
+echo
+curl -s -X POST \
+  http://localhost:4000/channels/channel/anchorpeers \
+  -H "authorization: Bearer $ORG3_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"configUpdatePath":"../artifacts/channel/Org3MSPanchors.tx"
 }'
 echo
 echo

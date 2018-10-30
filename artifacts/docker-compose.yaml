@@ -16,7 +16,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/ab5abf349da64ffbe832615f74d276f9c369324e20d87de368521589e2c7e2ee_sk
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.rxmed.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/8defd762f66a54734e29ce150ba21ecd750e7d8dfb05a46c37dca936fa65a318_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/ab5abf349da64ffbe832615f74d276f9c369324e20d87de368521589e2c7e2ee_sk
     ports:
       - "7054:7054"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
@@ -33,7 +33,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/cf15ada1d1de00eccbe2aa28f9ffe55e72ca047524de5ee24c438108510194cb_sk
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.rxmed.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/1926400cb8f460e64b93ef9ac56f72659b406654c26b4a90a9a73ab48d9331b5_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/cf15ada1d1de00eccbe2aa28f9ffe55e72ca047524de5ee24c438108510194cb_sk
     ports:
       - "8054:7054"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
@@ -50,7 +50,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/20fa29c274e85076dd80d01b375c1352af3bd7c6dcb4ef464d9712f4ba616a89_sk
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org3.rxmed.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/cd72ed658218e472803fc3274d5ac497cf89493225f2496fc6dbc90786111430_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/20fa29c274e85076dd80d01b375c1352af3bd7c6dcb4ef464d9712f4ba616a89_sk
     ports:
       - "9054:7054"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
