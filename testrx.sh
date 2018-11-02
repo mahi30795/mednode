@@ -102,11 +102,11 @@ sleep 5
 echo "POST request Join channel on Org1"
 echo
 curl -s -X POST \
-  http://localhost:4000/channels/channel/peers \
+  http://localhost:4000/channels/rxmed/peers \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d '{
-	"peers": ["peer0.org1.rxmed.com","peer1.org1.rxmed.com"]
+	"peers": ["peer0.org1.rxmed.com","peer1.org1.rxmed.com","peer2.org1.rxmed.com","peer3.org1.rxmed.com"]
 }'
 echo
 echo
@@ -114,11 +114,11 @@ echo
 echo "POST request Join channel on Org2"
 echo
 curl -s -X POST \
-  http://localhost:4000/channels/channel/peers \
+  http://localhost:4000/channels/rxmed/peers \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json" \
   -d '{
-	"peers": ["peer0.org2.rxmed.com","peer1.org2.rxmed.com"]
+	"peers": ["peer0.org2.rxmed.com","peer1.org2.rxmed.com","peer2.org2.rxmed.com","peer3.org2.rxmed.com"]
 }'
 echo
 echo
@@ -126,11 +126,11 @@ echo
 echo "POST request Join channel on Org3"
 echo
 curl -s -X POST \
-  http://localhost:4000/channels/channel/peers \
+  http://localhost:4000/channels/rxmed/peers \
   -H "authorization: Bearer $ORG3_TOKEN" \
   -H "content-type: application/json" \
   -d '{
-	"peers": ["peer0.org3.rxmed.com","peer1.org3.rxmed.com"]
+	"peers": ["peer0.org3.rxmed.com","peer1.org3.rxmed.com","peer2.org3.rxmed.com","peer3.org3.rxmed.com"]
 }'
 echo
 echo
@@ -138,7 +138,7 @@ echo
 echo "POST request Update anchor peers on Org1"
 echo
 curl -s -X POST \
-  http://localhost:4000/channels/channel/anchorpeers \
+  http://localhost:4000/channels/rxmed/anchorpeers \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d '{
@@ -150,7 +150,7 @@ echo
 echo "POST request Update anchor peers on Org2"
 echo
 curl -s -X POST \
-  http://localhost:4000/channels/channel/anchorpeers \
+  http://localhost:4000/channels/rxmed/anchorpeers \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json" \
   -d '{
@@ -162,7 +162,7 @@ echo
 echo "POST request Update anchor peers on Org3"
 echo
 curl -s -X POST \
-  http://localhost:4000/channels/channel/anchorpeers \
+  http://localhost:4000/channels/rxmed/anchorpeers \
   -H "authorization: Bearer $ORG3_TOKEN" \
   -H "content-type: application/json" \
   -d '{
@@ -178,7 +178,7 @@ curl -s -X POST \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d "{
-	\"peers\": [\"peer0.org1.rxmed.com\",\"peer1.org1.rxmed.com\"],
+	\"peers\": [\"peer0.org1.rxmed.com\",\"peer1.org1.rxmed.com\",\"peer2.org1.rxmed.com\",\"peer3.org1.rxmed.com\"],
 	\"chaincodeName\":\"mycc\",
 	\"chaincodePath\":\"$CC_SRC_PATH\",
 	\"chaincodeType\": \"$LANGUAGE\",
@@ -194,7 +194,23 @@ curl -s -X POST \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json" \
   -d "{
-	\"peers\": [\"peer0.org2.rxmed.com\",\"peer1.org2.rxmed.com\"],
+	\"peers\": [\"peer0.org2.rxmed.com\",\"peer1.org2.rxmed.com\",\"peer2.org2.rxmed.com\",\"peer3.org2.rxmed.com\"],
+	\"chaincodeName\":\"mycc\",
+	\"chaincodePath\":\"$CC_SRC_PATH\",
+	\"chaincodeType\": \"$LANGUAGE\",
+	\"chaincodeVersion\":\"v0\"
+}"
+echo
+echo
+
+echo "POST Install chaincode on Org3"
+echo
+curl -s -X POST \
+  http://localhost:4000/chaincodes \
+  -H "authorization: Bearer $ORG3_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+	\"peers\": [\"peer0.org3.rxmed.com\",\"peer1.org3.rxmed.com\",\"peer2.org3.rxmed.com\",\"peer3.org3.rxmed.com\"],
 	\"chaincodeName\":\"mycc\",
 	\"chaincodePath\":\"$CC_SRC_PATH\",
 	\"chaincodeType\": \"$LANGUAGE\",
@@ -206,7 +222,7 @@ echo
 echo "POST instantiate chaincode on Org1"
 echo
 curl -s -X POST \
-  http://localhost:4000/channels/channel/chaincodes \
+  http://localhost:4000/channels/rxmed/chaincodes \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -218,14 +234,14 @@ curl -s -X POST \
 echo
 echo
 
-echo "POST invoke chaincode on peers of Org1 and Org2"
+echo "POST invoke chaincode on peers of Org1 and Org2 and Org3"
 echo
 TRX_ID=$(curl -s -X POST \
-  http://localhost:4000/channels/channel/chaincodes/mycc \
+  http://localhost:4000/channels/rxmed/chaincodes/mycc \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d '{
-	"peers": ["peer0.org1.rxmed.com","peer0.org2.rxmed.com"],
+	"peers": ["peer0.org1.rxmed.com","peer0.org2.rxmed.com","peer0.org3.rxmed.com"],
 	"fcn":"move",
 	"args":["a","b","10"]
 }')
@@ -236,7 +252,7 @@ echo
 echo "GET query chaincode on peer1 of Org1"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/channel/chaincodes/mycc?peer=peer0.org1.rxmed.com&fcn=query&args=%5B%22a%22%5D" \
+  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer0.org1.rxmed.com&fcn=query&args=%5B%22a%22%5D" \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
 echo
@@ -245,7 +261,7 @@ echo
 echo "GET query Block by blockNumber"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/channel/blocks/1?peer=peer0.org1.rxmed.com" \
+  "http://localhost:4000/channels/rxmed/blocks/1?peer=peer0.org1.rxmed.com" \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
 echo
@@ -253,7 +269,7 @@ echo
 
 echo "GET query Transaction by TransactionID"
 echo
-curl -s -X GET http://localhost:4000/channels/channel/transactions/$TRX_ID?peer=peer0.org1.rxmed.com \
+curl -s -X GET http://localhost:4000/channels/rxmed/transactions/$TRX_ID?peer=peer0.org1.rxmed.com \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
 echo
@@ -277,7 +293,7 @@ echo
 echo "GET query ChainInfo"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/channel?peer=peer0.org1.rxmed.com" \
+  "http://localhost:4000/channels/rxmed?peer=peer0.org1.rxmed.com" \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
 echo
@@ -295,7 +311,7 @@ echo
 echo "GET query Instantiated chaincodes"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/channel/chaincodes?peer=peer0.org1.rxmed.com" \
+  "http://localhost:4000/channels/rxmed/chaincodes?peer=peer0.org1.rxmed.com" \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
 echo
