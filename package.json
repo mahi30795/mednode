@@ -4,7 +4,8 @@
   "description": "A balance-transfer example node program to demonstrate using node.js SDK APIs",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "mocha"
   },
   "keywords": [
     "fabric-client sample app",
@@ -29,5 +30,9 @@
     "fs-extra": "^2.0.0",
     "jsonwebtoken": "^7.3.0",
     "log4js": "^0.6.38"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
   }
 }
