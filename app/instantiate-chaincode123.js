@@ -14,15 +14,13 @@
  *  limitations under the License.
  */
 'use strict';
-var path = require('path');
-var fs = require('fs');
 var util = require('util');
-var hfc = require('fabric-client');
 var helper = require('./helper.js');
 var logger = helper.getLogger('instantiate-chaincode');
 
-var instantiateChaincode = async function(peers, channelName, chaincodeName, chaincodeVersion, chaincodeType, fcn, args, username, org_name) {
-	logger.debug('\n\n============ Instantiate chaincode on channel ' + channelName + ' ============\n');
+var instantiateChaincode = async function(peers, channelName, chaincodeName, chaincodeVersion, functionName, chaincodeType, args, username, org_name) {
+	logger.debug('\n\n============ Instantiate chaincode on channel ' + channelName +
+		' ============\n');
 	var error_message = null;
 
 	try {
@@ -36,26 +34,39 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 			throw new Error(message);
 		}
 		var tx_id = client.newTransactionID(true); // Get an admin based transactionID
+		                                       // An admin based transactionID will
+		                                       // indicate that admin identity should
+		                                       // be used to sign the proposal request.
 		// will need the transaction ID string for the event registration later
-		var tx_id_string = tx_id.getTransactionID();
+		var deployId = tx_id.getTransactionID();
 
 		// send proposal to endorser
 		var request = {
-			// targets: peers,
+			targets : peers,
 			chaincodeId: chaincodeName,
 			chaincodeType: chaincodeType,
 			chaincodeVersion: chaincodeVersion,
 			args: args,
-			txId: tx_id
+			txId: tx_id,
+
+			// Use this to demonstrate the following policy:
+			// The policy can be fulfilled when members from both orgs signed.
+			'endorsement-policy': {
+			        identities: [
+					{ role: { name: 'member', mspId: 'Org1MSP' }},
+					{ role: { name: 'member', mspId: 'Org2MSP' }},
+					{ role: { name: 'member', mspId: 'Org3MSP' }}
+			        ],
+			        policy: {
+					'3-of':[{ 'signed-by': 0 }, { 'signed-by': 1 }]
+			        }
+		        }
 		};
 
-		logger.debug('Transaction request: ' + JSON.stringify(request));
-		let results = null;
-		if (chaincodeVersion == 'v0') {
-			results = await channel.sendInstantiateProposal(request, 300000); //instantiate takes much longer
-		} else {
-			results = await channel.sendUpgradeProposal(request, 300000); //instantiate takes much longer
-		}
+		if (functionName)
+			request.fcn = functionName;
+
+		let results = await channel.sendInstantiateProposal(request, 300000); //instantiate takes much longer
 
 		// the returned object has both the endorsement results
 		// and the actual proposal, the proposal will be needed
@@ -72,9 +83,9 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 			if (proposalResponses && proposalResponses[i].response &&
 				proposalResponses[i].response.status === 200) {
 				one_good = true;
-				logger.info(util.format('Instantiate proposal for %s was good (%d).', chaincodeName, i));
+				logger.info('instantiate proposal was good');
 			} else {
-				logger.error(util.format('Instantiate proposal for %s was bad (%d).', chaincodeName, i));
+				logger.error('instantiate proposal was bad');
 			}
 			all_good = all_good & one_good;
 		}
@@ -98,13 +109,13 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 						logger.error(message);
 						eh.disconnect();
 					}, 240000);
-					eh.registerTxEvent(tx_id_string, (tx, code, block_num) => {
+					eh.registerTxEvent(deployId, (tx, code, block_num) => {
 						logger.info('The chaincode instantiate transaction has been committed on peer %s',eh.getPeerAddr());
 						logger.info('Transaction %s has status of %s in blocl %s', tx, code, block_num);
 						clearTimeout(event_timeout);
 
 						if (code !== 'VALID') {
-							let message = until.format('The chaincode instantiate transaction was invalid, code:%s',code);
+							let message = util.format('The chaincode instantiate transaction was invalid, code:%s',code);
 							logger.error(message);
 							reject(new Error(message));
 						} else {
@@ -129,7 +140,11 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 			});
 
 			var orderer_request = {
-				txId: tx_id, // note: transactionID is based on the admin id not the current user assigned to the 'client' instance.
+				txId: tx_id, // must include the transaction id so that the outbound
+				             // transaction to the orderer will be signed by the admin
+							 // id as was the proposal above, notice that transactionID
+							 // generated above was based on the admin id not the current
+							 // user assigned to the 'client' instance.
 				proposalResponses: proposalResponses,
 				proposal: proposal
 			};
@@ -168,29 +183,21 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 		error_message = error.toString();
 	}
 
-	let response = { success: false, message: "" };
-
 	if (!error_message) {
 		let message = util.format(
 			'Successfully instantiate chaincode in organization %s to the channel \'%s\'',
 			org_name, channelName);
 		logger.info(message);
-
 		// build a response to send back to the REST caller
-		response.success = true;
-		response.message = message;
-		response.tx_id = tx_id_string;
+		let response = {
+			success: true,
+			message: message
+		};
+		return response;
 	} else {
-		let message = util.format('Failed to instantiate. cause: %s',error_message);
+		let message = util.format('Failed to instantiate. cause:%s',error_message);
 		logger.error(message);
-
-		// build a response to send back to the REST caller
-		response.success = true;
-		response.message = message;
-		response.tx_id = tx_id_string;
+		throw new Error(message);
 	}
-
-	return response;
 };
-
 exports.instantiateChaincode = instantiateChaincode;
