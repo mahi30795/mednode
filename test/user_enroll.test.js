@@ -214,7 +214,7 @@ before('Running pre configurations', async function enroll() {
   // Request to instantiate chaincode on Org1
   await axios({
     method: 'post',
-    url: ' http://localhost:4000/rxmed/chaincodes',
+    url: ' http://localhost:4000/channels/rxmed/chaincodes',
     headers: { authorization: `Bearer ${Enrollment1.data.token}` },
     data: {
       chaincodeName: 'mycc',
