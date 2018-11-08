@@ -167,8 +167,8 @@ before('Running pre configurations', async function enroll() {
     data: {
       peers: ['peer0.org1.rxmed.com', 'peer1.org1.rxmed.com', 'peer2.org1.rxmed.com', 'peer3.org1.rxmed.com'],
       chaincodeName: 'mycc',
-      chaincodePath: '$CC_SRC_PATH',
-      chaincodeType: '$LANGUAGE',
+      chaincodePath: 'github.com/example_cc/go',
+      chaincodeType: 'golang',
       chaincodeVersion: 'v0',
     },
   }).then((res) => {
@@ -184,8 +184,8 @@ before('Running pre configurations', async function enroll() {
     data: {
       peers: ['peer0.org2.rxmed.com', 'peer1.org2.rxmed.com', 'peer2.org2.rxmed.com', 'peer3.org2.rxmed.com'],
       chaincodeName: 'mycc',
-      chaincodePath: '$CC_SRC_PATH',
-      chaincodeType: '$LANGUAGE',
+      chaincodePath: 'github.com/example_cc/go',
+      chaincodeType: 'golang',
       chaincodeVersion: 'v0',
     },
   }).then((res) => {
@@ -201,8 +201,8 @@ before('Running pre configurations', async function enroll() {
     data: {
       peers: ['peer0.org3.rxmed.com', 'peer1.org3.rxmed.com', 'peer2.org3.rxmed.com', 'peer3.org3.rxmed.com'],
       chaincodeName: 'mycc',
-      chaincodePath: '$CC_SRC_PATH',
-      chaincodeType: '$LANGUAGE',
+      chaincodePath: 'github.com/example_cc/go',
+      chaincodeType: 'golang',
       chaincodeVersion: 'v0',
     },
   }).then((res) => {
