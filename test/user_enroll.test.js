@@ -1,7 +1,7 @@
 /**
  * Testing Script to test user enrollment
  *
- *  @author Sachu Shaji Abraham <sachu.shaji@netobjex.com>
+ *  @author Sachu Shaji Abraham
  */
 
 /* global describe,it,before */
@@ -25,6 +25,7 @@ let UpdateAnchorPeer3;
 let ChainCodeInstallorg1;
 let ChainCodeInstallorg2;
 let ChainCodeInstallorg3;
+let InstatiateCode;
 
 before('Running pre configurations', async function enroll() {
   this.timeout(0);
@@ -210,6 +211,22 @@ before('Running pre configurations', async function enroll() {
   }).catch((err) => {
     ChainCodeInstallorg3 = err;
   });
+  // Request to instantiate chaincode on Org1
+  await axios({
+    method: 'post',
+    url: ' http://localhost:4000/rxmed/chaincodes',
+    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+    data: {
+      chaincodeName: 'mycc',
+      chaincodeVersion: 'v0',
+      chaincodeType: 'golang',
+      args: ['a', '100', 'b', '200'],
+    },
+  }).then((res) => {
+    InstatiateCode = res;
+  }).catch((err) => {
+    InstatiateCode = err;
+  });
 });
 
 describe('Testing the enrollment of the users', () => {
@@ -278,6 +295,13 @@ describe('Installing chaincodes in organisations', () => {
   });
   it('Org3 should succesfully install the chain code', () => {
     expect(ChainCodeInstallorg3.data.success)
+      .equals(true);
+  });
+});
+
+describe('Instantiate chaincode on Org1', () => {
+  it('Org1 should succesfully instantiate chaincode', () => {
+    expect(InstatiateCode.data.success)
       .equals(true);
   });
 });
