@@ -16,6 +16,9 @@ let Enrollment1; // variable to store response of user one
 let Enrollment2; // variable to store response of user two
 let Enrollment3; // variable to store response of user three
 let channel; // channel creation
+let ChannelJoin1; // Org1 channel join
+let ChannelJoin2; // Org2 channel join
+let ChannelJoin3; // Org3 channel join
 
 before('Running pre configurations', async function enroll() {
   this.timeout(0);
@@ -58,7 +61,7 @@ before('Running pre configurations', async function enroll() {
   }).catch((err) => {
     Enrollment3 = err;
   });
-  // Requseting Channel Creation
+  // Requesting Channel Creation
   await axios({
     method: 'post',
     url: ' http://localhost:4000/channels',
@@ -71,6 +74,45 @@ before('Running pre configurations', async function enroll() {
     channel = res;
   }).catch((err) => {
     channel = err;
+  });
+  // Request to join channel on Org1
+  await axios({
+    method: 'post',
+    url: ' http://localhost:4000/channels/rxmed/peers',
+    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+    data: {
+      peers: ['peer0.org1.rxmed.com', 'peer1.org1.rxmed.com', 'peer2.org1.rxmed.com', 'peer3.org1.rxmed.com'],
+    },
+  }).then((res) => {
+    ChannelJoin1 = res;
+  }).catch((err) => {
+    ChannelJoin1 = err;
+  });
+  // Request to join channel on Org2
+  await axios({
+    method: 'post',
+    url: ' http://localhost:4000/channels/rxmed/peers',
+    headers: { authorization: `Bearer ${Enrollment2.data.token}` },
+    data: {
+      peers: ['peer0.org2.rxmed.com', 'peer1.org2.rxmed.com', 'peer2.org2.rxmed.com', 'peer3.org2.rxmed.com'],
+    },
+  }).then((res) => {
+    ChannelJoin2 = res;
+  }).catch((err) => {
+    ChannelJoin2 = err;
+  });
+  // Request to join channel on Org3
+  await axios({
+    method: 'post',
+    url: ' http://localhost:4000/channels/rxmed/peers',
+    headers: { authorization: `Bearer ${Enrollment3.data.token}` },
+    data: {
+      peers: ['peer0.org3.rxmed.com', 'peer1.org3.rxmed.com', 'peer2.org3.rxmed.com', 'peer3.org3.rxmed.com'],
+    },
+  }).then((res) => {
+    ChannelJoin3 = res;
+  }).catch((err) => {
+    ChannelJoin3 = err;
   });
 });
 
@@ -94,7 +136,22 @@ describe('Testing the enrollment of the users', () => {
 
 describe('Creation of channels', () => {
   it('it should successfully create a channel', () => {
-	expect(channel.data.success)
+    expect(channel.data.success)
+      .equals(true);
+  });
+});
+
+describe('Joining into channels', () => {
+  it('Org1 should succesfully join channel', () => {
+    expect(ChannelJoin1.data.success)
+      .equals(true);
+  });
+  it('Org2 should succesfully join channel', () => {
+    expect(ChannelJoin2.data.success)
+      .equals(true);
+  });
+  it('Org3 should succesfully join channel', () => {
+    expect(ChannelJoin3.data.success)
       .equals(true);
   });
 });
