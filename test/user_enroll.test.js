@@ -22,6 +22,9 @@ let ChannelJoin3; // Org3 channel join
 let UpdateAnchorPeer1;
 let UpdateAnchorPeer2;
 let UpdateAnchorPeer3;
+let ChainCodeInstallorg1;
+let ChainCodeInstallorg2;
+let ChainCodeInstallorg3;
 
 before('Running pre configurations', async function enroll() {
   this.timeout(0);
@@ -156,6 +159,57 @@ before('Running pre configurations', async function enroll() {
   }).catch((err) => {
     UpdateAnchorPeer3 = err;
   });
+  // Request to install Chaincode in Org1
+  await axios({
+    method: 'post',
+    url: ' http://localhost:4000/chaincodes',
+    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+    data: {
+      peers: ['peer0.org1.rxmed.com', 'peer1.org1.rxmed.com', 'peer2.org1.rxmed.com', 'peer3.org1.rxmed.com'],
+      chaincodeName: 'mycc',
+      chaincodePath: '$CC_SRC_PATH',
+      chaincodeType: '$LANGUAGE',
+      chaincodeVersion: 'v0',
+    },
+  }).then((res) => {
+    ChainCodeInstallorg1 = res;
+  }).catch((err) => {
+    ChainCodeInstallorg1 = err;
+  });
+  // Request to install Chaincode in Org2
+  await axios({
+    method: 'post',
+    url: ' http://localhost:4000/chaincodes',
+    headers: { authorization: `Bearer ${Enrollment2.data.token}` },
+    data: {
+      peers: ['peer0.org2.rxmed.com', 'peer1.org2.rxmed.com', 'peer2.org2.rxmed.com', 'peer3.org2.rxmed.com'],
+      chaincodeName: 'mycc',
+      chaincodePath: '$CC_SRC_PATH',
+      chaincodeType: '$LANGUAGE',
+      chaincodeVersion: 'v0',
+    },
+  }).then((res) => {
+    ChainCodeInstallorg2 = res;
+  }).catch((err) => {
+    ChainCodeInstallorg2 = err;
+  });
+  // Request to install Chaincode in Org3
+  await axios({
+    method: 'post',
+    url: ' http://localhost:4000/chaincodes',
+    headers: { authorization: `Bearer ${Enrollment3.data.token}` },
+    data: {
+      peers: ['peer0.org3.rxmed.com', 'peer1.org3.rxmed.com', 'peer2.org3.rxmed.com', 'peer3.org3.rxmed.com'],
+      chaincodeName: 'mycc',
+      chaincodePath: '$CC_SRC_PATH',
+      chaincodeType: '$LANGUAGE',
+      chaincodeVersion: 'v0',
+    },
+  }).then((res) => {
+    ChainCodeInstallorg3 = res;
+  }).catch((err) => {
+    ChainCodeInstallorg3 = err;
+  });
 });
 
 describe('Testing the enrollment of the users', () => {
@@ -209,6 +263,21 @@ describe('updating the anchor peers', () => {
   });
   it('Org3 should succesfully update the its anchorpeer', () => {
     expect(UpdateAnchorPeer3.data.success)
+      .equals(true);
+  });
+});
+
+describe('Installing chaincodes in organisations', () => {
+  it('Org1 should succesfully install the chain code', () => {
+    expect(ChainCodeInstallorg1.data.success)
+      .equals(true);
+  });
+  it('Org2 should succesfully install the chain code', () => {
+    expect(ChainCodeInstallorg2.data.success)
+      .equals(true);
+  });
+  it('Org3 should succesfully install the chain code', () => {
+    expect(ChainCodeInstallorg3.data.success)
       .equals(true);
   });
 });
