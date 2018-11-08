@@ -19,6 +19,9 @@ let channel; // channel creation
 let ChannelJoin1; // Org1 channel join
 let ChannelJoin2; // Org2 channel join
 let ChannelJoin3; // Org3 channel join
+let UpdateAnchorPeer1;
+let UpdateAnchorPeer2;
+let UpdateAnchorPeer3;
 
 before('Running pre configurations', async function enroll() {
   this.timeout(0);
@@ -114,6 +117,45 @@ before('Running pre configurations', async function enroll() {
   }).catch((err) => {
     ChannelJoin3 = err;
   });
+  // Request to update anchor peer 1
+  await axios({
+    method: 'post',
+    url: ' http://localhost:4000/channels/rxmed/anchorpeers',
+    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+    data: {
+      configUpdatePath: '../artifacts/channel/Org1MSPanchors.tx',
+    },
+  }).then((res) => {
+    UpdateAnchorPeer1 = res;
+  }).catch((err) => {
+    UpdateAnchorPeer1 = err;
+  });
+  // Request to update anchor peer 2
+  await axios({
+    method: 'post',
+    url: ' http://localhost:4000/channels/rxmed/anchorpeers',
+    headers: { authorization: `Bearer ${Enrollment2.data.token}` },
+    data: {
+      configUpdatePath: '../artifacts/channel/Org2MSPanchors.tx',
+    },
+  }).then((res) => {
+    UpdateAnchorPeer2 = res;
+  }).catch((err) => {
+    UpdateAnchorPeer2 = err;
+  });
+  // Request to update anchor peer 3
+  await axios({
+    method: 'post',
+    url: ' http://localhost:4000/channels/rxmed/anchorpeers',
+    headers: { authorization: `Bearer ${Enrollment3.data.token}` },
+    data: {
+      configUpdatePath: '../artifacts/channel/Org3MSPanchors.tx',
+    },
+  }).then((res) => {
+    UpdateAnchorPeer3 = res;
+  }).catch((err) => {
+    UpdateAnchorPeer3 = err;
+  });
 });
 
 describe('Testing the enrollment of the users', () => {
@@ -152,6 +194,21 @@ describe('Joining into channels', () => {
   });
   it('Org3 should succesfully join channel', () => {
     expect(ChannelJoin3.data.success)
+      .equals(true);
+  });
+});
+
+describe('updating the anchor peers', () => {
+  it('Org1 should succesfully update the its anchorpeer', () => {
+    expect(UpdateAnchorPeer1.data.success)
+      .equals(true);
+  });
+  it('Org2 should succesfully update the its anchorpeer', () => {
+    expect(UpdateAnchorPeer2.data.success)
+      .equals(true);
+  });
+  it('Org3 should succesfully update the its anchorpeer', () => {
+    expect(UpdateAnchorPeer3.data.success)
       .equals(true);
   });
 });
