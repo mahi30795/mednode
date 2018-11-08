@@ -283,7 +283,7 @@ before('Running pre configurations', async function enroll() {
   // Request to query ChainInfo
   await axios({
     method: 'get',
-    url: 'http://localhost:4000/channels/rxmed?peer=peer0.org1.rxmed.com',
+    url: ' http://localhost:4000/channels/rxmed?peer=peer0.org1.rxmed.com',
     headers: { authorization: `Bearer ${Enrollment1.data.token}` },
   }).then((res) => {
     QueryChainInfo = res;
@@ -293,7 +293,7 @@ before('Running pre configurations', async function enroll() {
   // Request to query installed Chaincodes
   await axios({
     method: 'get',
-    url: 'http://localhost:4000/chaincodes?peer=peer0.org1.rxmed.com',
+    url: ' http://localhost:4000/chaincodes?peer=peer0.org1.rxmed.com',
     headers: { authorization: `Bearer ${Enrollment1.data.token}` },
   }).then((res) => {
     QueryInstalledChaincodes = res;
@@ -303,7 +303,7 @@ before('Running pre configurations', async function enroll() {
   // Request to query Instantiated chaincodes
   await axios({
     method: 'get',
-    url: 'http://localhost:4000/channels/rxmed/chaincodes?peer=peer0.org1.rxmed.com',
+    url: ' http://localhost:4000/channels/rxmed/chaincodes?peer=peer0.org1.rxmed.com',
     headers: { authorization: `Bearer ${Enrollment1.data.token}` },
   }).then((res) => {
     QueryintantiatedChainCodes = res;
@@ -313,7 +313,7 @@ before('Running pre configurations', async function enroll() {
   // Request to query Channels
   await axios({
     method: 'get',
-    url: 'http://localhost:4000/channels?peer=peer0.org1.rxmed.com',
+    url: ' http://localhost:4000/channels?peer=peer0.org1.rxmed.com',
     headers: { authorization: `Bearer ${Enrollment1.data.token}` },
   }).then((res) => {
     QueryChannels = res;
