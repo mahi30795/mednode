@@ -28,6 +28,7 @@ let ChainCodeInstallorg3;
 let InstatiateCode;
 let TXID;
 let QueryChainCode;
+let QueryBlock;
 
 before('Running pre configurations', async function enroll() {
   this.timeout(0);
@@ -254,6 +255,16 @@ before('Running pre configurations', async function enroll() {
   }).catch((err) => {
     QueryChainCode = err;
   });
+  // Request to query Block by blockNumber
+  await axios({
+    method: 'get',
+    url: ' http://localhost:4000/channels/rxmed/blocks/1?peer=peer0.org1.rxmed.com',
+    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+  }).then((res) => {
+    QueryBlock = res;
+  }).catch((err) => {
+    QueryBlock = err;
+  });
 });
 
 
@@ -348,3 +359,11 @@ describe('Query chaincode on peer1 of Org1', () => {
       .equals(true);
   });
 });
+
+describe('Query Block by blockNumber', () => {
+  it('It should successfully query Block by blockNumber', () => {
+    expect(QueryBlock.data.success)
+      .equals(true);
+  });
+});
+
