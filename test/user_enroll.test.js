@@ -410,36 +410,14 @@ describe('Instantiate chaincode on Org1', () => {
 
 describe('Query chaincode on peer1 of Org1', () => {
   it('Org1 should succesfully query chaincode on peer1', () => {
-    var cache = [];
-var output=JSON.stringify(QueryChainCode, function(key, value) {
-    if (typeof value === 'object' && value !== null) {
-        if (cache.indexOf(value) !== -1) {
-            // Duplicate reference found
-            try {
-                // If this value does not reference a parent it can be deduped
-                return JSON.parse(JSON.stringify(value));
-            } catch (error) {
-                // discard key if value cannot be deduped
-                return;
-            }
-        }
-        // Store value in our collection
-        cache.push(value);
-    }
-    return value;
-});
-cache = null; // Enable garbage collection
-
-console.log(output);
-    expect(QueryChainCode.data.success)
-      .equals(true);
+    expect(QueryChainCode.status)
+      .equals(200);
   });
 });
 
 describe('Query Block by blockNumber', () => {
   it('It should successfully query Block by blockNumber', () => {
-    expect(QueryBlock.data.success)
-      .equals(true);
+    expect(QueryBlock.status).equals(200);
   });
 });
 
@@ -452,29 +430,25 @@ describe('Query Block by blockNumber', () => {
 
 describe('Query ChainInfo', () => {
   it('It should successfully query ChainInfo', () => {
-    expect(QueryChainInfo.data.success)
-      .equals(true);
+    expect(QueryChainInfo.status).equals(200);
   });
 });
 
 describe('Query Installed chaincodes', () => {
   it('It should successfully query Installed chaincodes', () => {
-    expect(QueryInstalledChaincodes.data.success)
-      .equals(true);
+    expect(QueryInstalledChaincodes.status).equals(200);
   });
 });
 
 describe('Query  Instantiated chaincodes', () => {
   it('It should successfully query  Instantiated chaincodes', () => {
-    expect(QueryintantiatedChainCodes.data.success)
-      .equals(true);
+    expect(QueryintantiatedChainCodes.status).equals(200);
   });
 });
 
 
 describe('Query query Channels', () => {
   it('It should successfully query Channels', () => {
-    expect(QueryChannels.data.success)
-      .equals(true);
+    expect(QueryChannels.status).equals(200);
   });
 });
