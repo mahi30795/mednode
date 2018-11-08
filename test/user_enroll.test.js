@@ -27,6 +27,7 @@ let ChainCodeInstallorg2;
 let ChainCodeInstallorg3;
 let InstatiateCode;
 let TXID;
+let QueryChainCode;
 
 before('Running pre configurations', async function enroll() {
   this.timeout(0);
@@ -243,6 +244,16 @@ before('Running pre configurations', async function enroll() {
   }).catch((err) => {
     TXID = err;
   });
+  // Request to query chaincode on peer1 of Org1
+  await axios({
+    method: 'get',
+    url: ' http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer0.org1.rxmed.com&fcn=query&args=%5B%22a%22%5D',
+    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+  }).then((res) => {
+    QueryChainCode = res;
+  }).catch((err) => {
+    QueryChainCode = err;
+  });
 });
 
 
@@ -327,6 +338,13 @@ describe('Invoke chaincode on peers of Org1 and Org2 and Org3', () => {
   it('It should succesfully invoke chaincode', () => {
     console.log("this="+TXID);
     expect(TXID.data.success)
+      .equals(true);
+  });
+});
+
+describe('Query chaincode on peer1 of Org1', () => {
+  it('Org1 should succesfully query chaincode on peer1', () => {
+    expect(QueryChainCode.data.success)
       .equals(true);
   });
 });
