@@ -96,5 +96,6 @@ describe('Creation of channels', () => {
   it('it should successfully create a channel', () => {
     expect(channel.success)
       .equals('true');
+    console.log(channel);
   });
 });
