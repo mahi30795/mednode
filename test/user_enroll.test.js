@@ -410,6 +410,27 @@ describe('Instantiate chaincode on Org1', () => {
 
 describe('Query chaincode on peer1 of Org1', () => {
   it('Org1 should succesfully query chaincode on peer1', () => {
+    var cache = [];
+var output=JSON.stringify(QueryChainCode, function(key, value) {
+    if (typeof value === 'object' && value !== null) {
+        if (cache.indexOf(value) !== -1) {
+            // Duplicate reference found
+            try {
+                // If this value does not reference a parent it can be deduped
+                return JSON.parse(JSON.stringify(value));
+            } catch (error) {
+                // discard key if value cannot be deduped
+                return;
+            }
+        }
+        // Store value in our collection
+        cache.push(value);
+    }
+    return value;
+});
+cache = null; // Enable garbage collection
+
+console.log(output);
     expect(QueryChainCode.data.success)
       .equals(true);
   });
