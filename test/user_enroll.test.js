@@ -15,6 +15,7 @@ const axios = require('axios');
 let Enrollment1; // variable to store response of user one
 let Enrollment2; // variable to store response of user two
 let Enrollment3; // variable to store response of user three
+let channel; // channel creation
 
 before('Running pre configurations', async function enroll() {
   this.timeout(0);
@@ -57,6 +58,20 @@ before('Running pre configurations', async function enroll() {
   }).catch((err) => {
     Enrollment3 = err;
   });
+  // Requseting Channel Creation
+  await axios({
+    method: 'post',
+    url: ' http://localhost:4000/channels',
+    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+    data: {
+      channelName: 'rxmed',
+      channelConfigPath: '../artifacts/channel/channel.tx',
+    },
+  }).then((res) => {
+    channel = res;
+  }).catch((err) => {
+    channel = err;
+  });
 });
 
 describe('Testing the enrollment of the users', () => {
@@ -72,6 +87,14 @@ describe('Testing the enrollment of the users', () => {
   });
   it('it should succesfully register the users three', () => {
     expect(Enrollment3)
+      .to.have.property('status')
+      .equals(200);
+  });
+});
+
+describe('Creation of channels', () => {
+  it('it should successfully create a channel', () => {
+    expect(channel)
       .to.have.property('status')
       .equals(200);
   });
