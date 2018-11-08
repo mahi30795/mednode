@@ -26,6 +26,7 @@ let ChainCodeInstallorg1;
 let ChainCodeInstallorg2;
 let ChainCodeInstallorg3;
 let InstatiateCode;
+let TXID;
 
 before('Running pre configurations', async function enroll() {
   this.timeout(0);
@@ -227,7 +228,23 @@ before('Running pre configurations', async function enroll() {
   }).catch((err) => {
     InstatiateCode = err;
   });
+  // Request to invoke chaincode on peers of Org1 and Org2 and Org3
+  await axios({
+    method: 'post',
+    url: ' http://localhost:4000/channels/rxmed/chaincodes/mycc',
+    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+    data: {
+      peers: ['peer0.org1.rxmed.com', 'peer0.org2.rxmed.com', 'peer0.org3.rxmed.com'],
+      fcn: 'move',
+      args: ['a', 'b', '10'],
+    },
+  }).then((res) => {
+    TXID = res;
+  }).catch((err) => {
+    TXID = err;
+  });
 });
+
 
 describe('Testing the enrollment of the users', () => {
   it('it should succesfully register the users one ', () => {
@@ -302,6 +319,14 @@ describe('Installing chaincodes in organisations', () => {
 describe('Instantiate chaincode on Org1', () => {
   it('Org1 should succesfully instantiate chaincode', () => {
     expect(InstatiateCode.data.success)
+      .equals(true);
+  });
+});
+
+describe('Invoke chaincode on peers of Org1 and Org2 and Org3', () => {
+  it('It should succesfully invoke chaincode', () => {
+    console.log("this="+TXID);
+    expect(TXID.data.success)
       .equals(true);
   });
 });
