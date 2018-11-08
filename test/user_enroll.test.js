@@ -94,8 +94,7 @@ describe('Testing the enrollment of the users', () => {
 
 describe('Creation of channels', () => {
   it('it should successfully create a channel', () => {
-    expect(channel)
-      .to.have.property('status')
-      .equals(200);
+    expect(channel.success)
+      .equals('true');
   });
 });
