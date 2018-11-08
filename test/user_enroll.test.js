@@ -26,9 +26,14 @@ let ChainCodeInstallorg1;
 let ChainCodeInstallorg2;
 let ChainCodeInstallorg3;
 let InstatiateCode;
-let TXID;
+// let TXID;
 let QueryChainCode;
 let QueryBlock;
+// let QueryTXID;
+let QueryChainInfo;
+let QueryInstalledChaincodes;
+let QueryintantiatedChainCodes;
+let QueryChannels;
 
 before('Running pre configurations', async function enroll() {
   this.timeout(0);
@@ -231,20 +236,20 @@ before('Running pre configurations', async function enroll() {
     InstatiateCode = err;
   });
   // Request to invoke chaincode on peers of Org1 and Org2 and Org3
-  await axios({
-    method: 'post',
-    url: ' http://localhost:4000/channels/rxmed/chaincodes/mycc',
-    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
-    data: {
-      peers: ['peer0.org1.rxmed.com', 'peer0.org2.rxmed.com', 'peer0.org3.rxmed.com'],
-      fcn: 'move',
-      args: ['a', 'b', '10'],
-    },
-  }).then((res) => {
-    TXID = res;
-  }).catch((err) => {
-    TXID = err;
-  });
+  // await axios({
+  //   method: 'post',
+  //   url: ' http://localhost:4000/channels/rxmed/chaincodes/mycc',
+  //   headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+  //   data: {
+  //     peers: ['peer0.org1.rxmed.com', 'peer0.org2.rxmed.com', 'peer0.org3.rxmed.com'],
+  //     fcn: 'move',
+  //     args: ['a', 'b', '10'],
+  //   },
+  // }).then((res) => {
+  //   TXID = res;
+  // }).catch((err) => {
+  //   TXID = err;
+  // });
   // Request to query chaincode on peer1 of Org1
   await axios({
     method: 'get',
@@ -264,6 +269,56 @@ before('Running pre configurations', async function enroll() {
     QueryBlock = res;
   }).catch((err) => {
     QueryBlock = err;
+  });
+  // Request to query Transaction by TXID
+  // await axios({
+  //   method: 'get',
+  //   url: `http://localhost:4000/channels/rxmed/transactions/${}?peer=peer0.org1.rxmed.com`,
+  //   headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+  // }).then((res) => {
+  //   QueryTXID = res;
+  // }).catch((err) => {
+  //   QueryTXID = err;
+  // });
+  // Request to query ChainInfo
+  await axios({
+    method: 'get',
+    url: 'http://localhost:4000/channels/rxmed?peer=peer0.org1.rxmed.com',
+    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+  }).then((res) => {
+    QueryChainInfo = res;
+  }).catch((err) => {
+    QueryChainInfo = err;
+  });
+  // Request to query installed Chaincodes
+  await axios({
+    method: 'get',
+    url: 'http://localhost:4000/chaincodes?peer=peer0.org1.rxmed.com',
+    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+  }).then((res) => {
+    QueryInstalledChaincodes = res;
+  }).catch((err) => {
+    QueryInstalledChaincodes = err;
+  });
+  // Request to query Instantiated chaincodes
+  await axios({
+    method: 'get',
+    url: 'http://localhost:4000/channels/rxmed/chaincodes?peer=peer0.org1.rxmed.com',
+    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+  }).then((res) => {
+    QueryintantiatedChainCodes = res;
+  }).catch((err) => {
+    QueryintantiatedChainCodes = err;
+  });
+  // Request to query Channels
+  await axios({
+    method: 'get',
+    url: 'http://localhost:4000/channels?peer=peer0.org1.rxmed.com',
+    headers: { authorization: `Bearer ${Enrollment1.data.token}` },
+  }).then((res) => {
+    QueryChannels = res;
+  }).catch((err) => {
+    QueryChannels = err;
   });
 });
 
@@ -345,13 +400,13 @@ describe('Instantiate chaincode on Org1', () => {
   });
 });
 
-describe('Invoke chaincode on peers of Org1 and Org2 and Org3', () => {
-  it('It should succesfully invoke chaincode', () => {
-    console.log("this="+TXID);
-    expect(TXID.data.success)
-      .equals(true);
-  });
-});
+// describe('Invoke chaincode on peers of Org1 and Org2 and Org3', () => {
+//   it('It should succesfully invoke chaincode', () => {
+//     console.log("this="+TXID);
+//     expect(TXID.data.success)
+//       .equals(true);
+//   });
+// });
 
 describe('Query chaincode on peer1 of Org1', () => {
   it('Org1 should succesfully query chaincode on peer1', () => {
@@ -367,3 +422,38 @@ describe('Query Block by blockNumber', () => {
   });
 });
 
+// describe('Query Transaction by TXID', () => {
+//   it('It should successfully query Transaction by TXID', () => {
+//     expect(QueryTXID.data.success)
+//       .equals(true);
+//   });
+// });
+
+describe('Query ChainInfo', () => {
+  it('It should successfully query ChainInfo', () => {
+    expect(QueryChainInfo.data.success)
+      .equals(true);
+  });
+});
+
+describe('Query Installed chaincodes', () => {
+  it('It should successfully query Installed chaincodes', () => {
+    expect(QueryInstalledChaincodes.data.success)
+      .equals(true);
+  });
+});
+
+describe('Query  Instantiated chaincodes', () => {
+  it('It should successfully query  Instantiated chaincodes', () => {
+    expect(QueryintantiatedChainCodes.data.success)
+      .equals(true);
+  });
+});
+
+
+describe('Query query Channels', () => {
+  it('It should successfully query Channels', () => {
+    expect(QueryChannels.data.success)
+      .equals(true);
+  });
+});
